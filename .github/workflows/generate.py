@@ -95,15 +95,17 @@ INDEX_CSS = """
         gap: 0.5rem;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 0.5rem 1rem;
+        padding: 0.5rem 1.25rem;
         border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 500;
+        font-size: 0.85rem;
+        font-weight: 600;
         margin-top: 1rem;
         box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        letter-spacing: 0.05em;
     }
     .ai-badge::before {
-        content: '⚡';
+        content: '🤖';
+        font-size: 1rem;
     }
     .stats {
         display: flex;
@@ -306,14 +308,15 @@ def generate_index_html():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>棋谱回顾 - chess-reviews-summary</title>
+    <title>ChessLens - AI Chess Review</title>
     <style>{INDEX_CSS}</style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>棋谱回顾</h1>
-            <p class="subtitle">aaronwang2026 的国际象棋对局记录</p>
+            <p class="subtitle">🤖 AI 国际象棋复盘 · Powered by AI</p>
+            <div class="ai-badge">ChessLens · Review Smart, Improve Fast</div>
         </header>
 
         <div class="stats">
@@ -343,7 +346,7 @@ def generate_index_html():
         </section>
 
         <footer>
-            <p>♔ 棋谱回顾 · 自动生成于 {datetime.now().strftime('%Y-%m-%d')}</p>
+            <p>♔ ChessLens · Review Smart, Improve Fast · 自动生成于 {datetime.now().strftime('%Y-%m-%d')}</p>
         </footer>
     </div>
 </body>
