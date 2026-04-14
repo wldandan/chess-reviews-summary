@@ -41,6 +41,8 @@ def get_game_list():
             match = re.search(r'总回合数[：:]\s*(\d+)\s*步', content)
             if not match:
                 match = re.search(r'回合数[：:]\s*(\d+)\s*步', content)
+            if not match:
+                match = re.search(r'回合数[：:]\s*\d+回合\s*\((\d+)步\)', content)
             if match:
                 steps = match.group(1)
 
@@ -336,7 +338,7 @@ def generate_index_html():
                 <div class="game-meta">
                     <span class="game-color {color_class}">{g['color']}</span>
                     <span>{g['date']}</span>
-                    <span>{g['steps']}</span>
+                    <span>{g['steps']}步</span>
                 </div>
             </div>
             <a href="{link}" class="game-link">查看 →</a>
