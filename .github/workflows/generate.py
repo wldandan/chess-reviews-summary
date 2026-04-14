@@ -39,6 +39,8 @@ def get_game_list():
             steps = '-'
             content = read_file(os.path.join(SRC_DIR, f))
             match = re.search(r'总回合数[：:]\s*(\d+)\s*步', content)
+            if not match:
+                match = re.search(r'回合数[：:]\s*(\d+)\s*步', content)
             if match:
                 steps = match.group(1)
 
