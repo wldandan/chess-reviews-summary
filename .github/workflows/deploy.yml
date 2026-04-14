@@ -28,7 +28,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install markdown
+          pip install mistune
 
       - name: Generate HTML
         run: python .github/workflows/generate.py

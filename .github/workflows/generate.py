@@ -2,7 +2,7 @@
 """Generate static HTML site from markdown files."""
 
 import os
-import markdown
+import mistune
 from datetime import datetime
 
 SRC_DIR = 'docs'
@@ -326,7 +326,7 @@ def generate_index_html():
     <div class="container">
         <header>
             <div class="brand-name">ChessLens</div>
-            <div class="slogan">Review Smart, Improve Fast</div>
+            <div class="slogan">Review Smarter, Improve Faster</div>
             <div class="ai-badge">🤖 AI-Powered Chess Review</div>
             <p class="subtitle">aaronwang2026 的对局记录</p>
         </header>
@@ -358,7 +358,7 @@ def generate_index_html():
         </section>
 
         <footer>
-            <p>♔ ChessLens · Review Smart, Improve Fast</p>
+            <p>♔ ChessLens · Review Smarter, Improve Faster</p>
         </footer>
     </div>
 </body>
@@ -368,7 +368,7 @@ def generate_index_html():
 def generate_game_html(filename):
     """Generate HTML for a single game markdown file."""
     md_content = read_file(os.path.join(SRC_DIR, filename))
-    body_html = markdown.Markdown(extensions=['tables', 'fenced_code']).convert(md_content)
+    body_html = mistune.html(md_content)
 
     title = filename.replace('.md', '').replace('_', ' ')
 
