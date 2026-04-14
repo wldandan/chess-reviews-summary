@@ -56,7 +56,7 @@ def generate_index_html():
     games = get_game_list()
     games_html = ''
     for g in games:
-        link = f"./{g['filename']}"
+        link = f"./{g['filename'].replace('.md', '.html')}"
         games_html += f"""<tr>
           <td>{g['date']}</td>
           <td>{g['color']}</td>
