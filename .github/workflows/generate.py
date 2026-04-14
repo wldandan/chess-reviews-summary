@@ -24,6 +24,7 @@ def read_file(path):
 
 def get_game_list():
     """Generate game list from markdown files."""
+    import re
     games = []
     for f in get_md_files():
         # Parse filename: 2026-04-14_aaronwang2026_执白胜_aaronwang2026_vs_Clement924810_19步
@@ -33,7 +34,13 @@ def get_game_list():
             color_text = '执白' if '执白' in f else '执黑'
             result = '胜' if '胜' in f else ('和' if '和' in f else '败')
             opponent = parts[5]
-            steps = parts[-1] if '步' in parts[-1] else '-'
+
+            # Extract steps from file content
+            steps = '-'
+            content = read_file(os.path.join(SRC_DIR, f))
+            match = re.search(r'总回合数[：:]\s*(\d+)\s*步', content)
+            if match:
+                steps = match.group(1)
 
             games.append({
                 'date': date,
