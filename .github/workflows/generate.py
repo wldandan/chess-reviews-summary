@@ -79,15 +79,22 @@ INDEX_CSS = """
         margin-bottom: 1rem;
         text-shadow: 0 0 30px rgba(230, 184, 0, 0.5);
     }
-    h1 {
-        font-size: 2.5rem;
+    .brand-name {
+        font-size: 3.5rem;
         font-weight: 700;
-        letter-spacing: 0.1em;
+        letter-spacing: 0.15em;
         margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
-    .subtitle {
+    .slogan {
+        font-size: 1.25rem;
         color: var(--text-muted);
-        font-size: 1rem;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        margin-bottom: 1.5rem;
     }
     .ai-badge {
         display: inline-flex;
@@ -99,13 +106,17 @@ INDEX_CSS = """
         border-radius: 20px;
         font-size: 0.85rem;
         font-weight: 600;
-        margin-top: 1rem;
         box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         letter-spacing: 0.05em;
     }
     .ai-badge::before {
         content: '🤖';
         font-size: 1rem;
+    }
+    .subtitle {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        margin-top: 0.75rem;
     }
     .stats {
         display: flex;
@@ -314,9 +325,10 @@ def generate_index_html():
 <body>
     <div class="container">
         <header>
-            <h1>棋谱回顾</h1>
-            <p class="subtitle">🤖 AI 国际象棋复盘 · Powered by AI</p>
-            <div class="ai-badge">ChessLens · Review Smart, Improve Fast</div>
+            <div class="brand-name">ChessLens</div>
+            <div class="slogan">Review Smart, Improve Fast</div>
+            <div class="ai-badge">🤖 AI-Powered Chess Review</div>
+            <p class="subtitle">aaronwang2026 的对局记录</p>
         </header>
 
         <div class="stats">
@@ -346,7 +358,7 @@ def generate_index_html():
         </section>
 
         <footer>
-            <p>♔ ChessLens · Review Smart, Improve Fast · 自动生成于 {datetime.now().strftime('%Y-%m-%d')}</p>
+            <p>♔ ChessLens · Review Smart, Improve Fast</p>
         </footer>
     </div>
 </body>
