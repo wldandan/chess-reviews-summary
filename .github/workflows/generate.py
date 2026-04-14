@@ -307,7 +307,7 @@ def generate_index_html():
                 <div class="game-meta">
                     <span class="game-color {color_class}">{g['color']}</span>
                     <span>{g['date']}</span>
-                    <span>{g['steps']}步</span>
+                    <span>{g['steps']}</span>
                 </div>
             </div>
             <a href="{link}" class="game-link">查看 →</a>
