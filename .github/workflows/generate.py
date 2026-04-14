@@ -95,7 +95,7 @@ def generate_index_html():
             text-align: left;
             border-bottom: 1px solid #eee;
         }}
-        th {{ background: #f5f5f5; font-weight: 600; }
+        th {{ background: #f5f5f5; font-weight: 600; }}
         .result-胜 {{ color: #22c55e; font-weight: bold; }}
         .result-负 {{ color: #ef4444; }}
         .result-和 {{ color: #f59e0b; }}
