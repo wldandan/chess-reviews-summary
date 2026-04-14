@@ -44,6 +44,12 @@ def get_game_list():
                 match = re.search(r'回合数[：:]\s*(\d+)\s*步', content)
             if not match:
                 match = re.search(r'回合数[：:]\s*\d+回合\s*\((\d+)步\)', content)
+            if not match:
+                match = re.search(r'\|\s*回合\s*\|\s*(\d+)\s*步', content)
+            if not match:
+                match = re.search(r'步后.*?(\d+)\s*步', content)
+            if not match:
+                match = re.search(r'(\d+)\s*步后', content)
             if match:
                 steps = match.group(1)
 
