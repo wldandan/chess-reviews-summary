@@ -35,9 +35,10 @@ def get_game_list():
             result = '胜' if '胜' in f else ('和' if '和' in f else '败')
             opponent = parts[5]
 
-            # Extract steps from file content
-            steps = '-'
             content = read_file(os.path.join(SRC_DIR, f))
+
+            # Extract steps
+            steps = '-'
             match = re.search(r'总回合数[：:]\s*(\d+)\s*步', content)
             if not match:
                 match = re.search(r'回合数[：:]\s*(\d+)\s*步', content)
@@ -46,12 +47,45 @@ def get_game_list():
             if match:
                 steps = match.group(1)
 
+            # Extract time control
+            time_control = '-'
+            match = re.search(r'时间控制[：:]\s*(\d+)', content)
+            if match:
+                tc = match.group(1)
+                if tc == '1800':
+                    time_control = '30+0'
+                elif tc == '900':
+                    time_control = '15+10'
+                elif tc == '600':
+                    time_control = '10+0'
+                elif tc == '300':
+                    time_control = '5+0'
+                else:
+                    time_control = tc
+
+            # Count highlights (lines starting with "- **" after 🎯)
+            highlights = 0
+            match = re.search(r'🎯\s*\*\*.+?\*\*.*?\n((?:.+\n)*)', content)
+            if match:
+                highlight_lines = match.group(1)
+                highlights = len(re.findall(r'^-\s+\*\*', highlight_lines, re.MULTILINE))
+
+            # Count mistakes (numbered items after ⚠️)
+            mistakes = 0
+            match = re.search(r'⚠️\s*\*\*.+?\*\*.*?\n((?:.+\n)*)', content)
+            if match:
+                mistake_section = match.group(1)
+                mistakes = len(re.findall(r'^\d+\.', mistake_section, re.MULTILINE))
+
             games.append({
                 'date': date,
                 'color': color_text,
                 'result': result,
                 'opponent': opponent,
                 'steps': steps,
+                'time_control': time_control,
+                'highlights': highlights,
+                'mistakes': mistakes,
                 'filename': f
             })
     return sorted(games, key=lambda x: x['date'], reverse=True)
