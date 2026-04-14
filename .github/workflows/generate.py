@@ -89,6 +89,22 @@ INDEX_CSS = """
         color: var(--text-muted);
         font-size: 1rem;
     }
+    .ai-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-top: 1rem;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    .ai-badge::before {
+        content: '⚡';
+    }
     .stats {
         display: flex;
         justify-content: center;

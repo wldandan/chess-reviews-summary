@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>棋谱回顾 - 风格A 深色棋盘风</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-dark: #1a1a2e;
+            --bg-card: #16213e;
+            --accent-gold: #e6b800;
+            --accent-green: #4ade80;
+            --text-light: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Noto Serif SC', serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            background-image:
+                linear-gradient(rgba(26,26,46,0.95), rgba(26,26,46,0.95)),
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 10px,
+                    rgba(255,255,255,0.02) 10px,
+                    rgba(255,255,255,0.02) 20px
+                );
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        header::before {
+            content: '♔';
+            font-size: 4rem;
+            color: var(--accent-gold);
+            display: block;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 30px rgba(230, 184, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin: 3rem 0;
+            padding: 2rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .games-section h2 {
+            font-size: 1.25rem;
+            color: var(--accent-gold);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-gold);
+            display: inline-block;
+        }
+
+        .game-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .game-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .game-card:hover {
+            border-color: var(--accent-gold);
+            transform: translateX(8px);
+            box-shadow: 0 0 20px rgba(230, 184, 0, 0.2);
+        }
+
+        .game-result {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .result-win {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+        }
+
+        .result-draw {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .result-loss {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .game-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .game-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .game-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .game-color {
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .color-white {
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        .color-black {
+            background: #334155;
+            color: #f1f5f9;
+        }
+
+        .game-link {
+            color: var(--accent-gold);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--accent-gold);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .game-link:hover {
+            background: var(--accent-gold);
+            color: var(--bg-dark);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>棋谱回顾</h1>
+            <p class="subtitle">aaronwang2026 的国际象棋对局记录</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value">4</div>
+                <div class="stat-label">总对局</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" style="color: #22c55e;">1</div>
+                <div class="stat-label">胜</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" style="color: #f59e0b;">1</div>
+                <div class="stat-label">和</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" style="color: #ef4444;">2</div>
+                <div class="stat-label">败</div>
+            </div>
+        </div>
+
+        <section class="games-section">
+            <h2>近期对局</h2>
+            <div class="game-list">
+                <div class="game-card">
+                    <div class="game-result result-win">胜</div>
+                    <div class="game-info">
+                        <h3>vs Clement924810</h3>
+                        <div class="game-meta">
+                            <span class="game-color color-white">执白</span>
+                            <span>2026-04-14</span>
+                            <span>19步</span>
+                        </div>
+                    </div>
+                    <a href="#" class="game-link">查看 →</a>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-result result-draw">和</div>
+                    <div class="game-info">
+                        <h3>vs kote-karter</h3>
+                        <div class="game-meta">
+                            <span class="game-color color-black">执黑</span>
+                            <span>2026-04-13</span>
+                            <span>59步</span>
+                        </div>
+                    </div>
+                    <a href="#" class="game-link">查看 →</a>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-result result-loss">败</div>
+                    <div class="game-info">
+                        <h3>vs babbabar</h3>
+                        <div class="game-meta">
+                            <span class="game-color color-white">执白</span>
+                            <span>2026-04-11</span>
+                            <span>-</span>
+                        </div>
+                    </div>
+                    <a href="#" class="game-link">查看 →</a>
+                </div>
+
+                <div class="game-card">
+                    <div class="game-result result-loss">败</div>
+                    <div class="game-info">
+                        <h3>vs digitaltheo</h3>
+                        <div class="game-meta">
+                            <span class="game-color color-white">执白</span>
+                            <span>2026-04-03</span>
+                            <span>-</span>
+                        </div>
+                    </div>
+                    <a href="#" class="game-link">查看 →</a>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>♔ 棋谱回顾 · 自动生成于 2026-04-14</p>
+        </footer>
+    </div>
+</body>
+</html>
