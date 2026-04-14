@@ -233,6 +233,20 @@ INDEX_CSS = """
     }
     .color-white { background: #f8fafc; color: #1e293b; }
     .color-black { background: #334155; color: #f1f5f9; }
+    .game-stats {
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.5rem;
+        font-size: 0.8rem;
+    }
+    .stat-highlight { color: #4ade80; }
+    .stat-mistake { color: #f87171; }
+    .time-badge {
+        background: var(--bg-dark);
+        padding: 0.15rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+    }
     .game-link {
         color: var(--accent-gold);
         text-decoration: none;
@@ -262,6 +276,7 @@ INDEX_CSS = """
             padding: 1rem;
         }
         .game-link { grid-column: 1 / -1; text-align: center; }
+        .game-stats { flex-wrap: wrap; }
     }
 """
 
@@ -373,6 +388,11 @@ def generate_index_html():
                     <span class="game-color {color_class}">{g['color']}</span>
                     <span>{g['date']}</span>
                     <span>{g['steps']}步</span>
+                    <span class="time-badge">⏱{g['time_control']}</span>
+                </div>
+                <div class="game-stats">
+                    <span class="stat-highlight">✨ {g['highlights']} 亮点</span>
+                    <span class="stat-mistake">⚠️ {g['mistakes']} 失误</span>
                 </div>
             </div>
             <a href="{link}" class="game-link">查看 →</a>
