@@ -26,21 +26,19 @@ def get_game_list():
     """Generate game list from markdown files."""
     games = []
     for f in get_md_files():
-        # Parse filename: 2026-04-14_aaronwang2026_执白胜_aaronwang2026_vs_Clement924810_19步.md
+        # Parse filename: 2026-04-14_aaronwang2026_执白胜_aaronwang2026_vs_Clement924810_19步
+        # parts[0]=date, parts[1]=player, parts[2]=color+result, parts[3]=player(again), parts[4]=vs, parts[5]=opponent
         parts = f.replace('.md', '').split('_')
-        if len(parts) >= 5:
+        if len(parts) >= 6:
             date = parts[0]
-            player = parts[1]
-            color = '白' if '执白' in f else '黑'
             color_text = '执白' if '执白' in f else '执黑'
             result = '胜' if '胜' in f else ('和' if '和' in f else '败')
-            opponent = parts[3] if len(parts) > 3 else 'unknown'
+            opponent = parts[5]
             steps = parts[-1] if '步' in parts[-1] else '-'
 
             games.append({
                 'date': date,
                 'color': color_text,
-                'color_raw': color,
                 'result': result,
                 'opponent': opponent,
                 'steps': steps,
