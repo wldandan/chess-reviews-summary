@@ -205,6 +205,19 @@ INDEX_CSS = """
         color: var(--text-muted);
         font-size: 0.875rem;
     }
+    @media (max-width: 768px) {
+        .container { padding: 1.5rem 1rem; }
+        .brand-name { font-size: 2.5rem; }
+        .slogan { font-size: 1rem; }
+        .stats { gap: 1rem; padding: 1rem; }
+        .stat-value { font-size: 1.75rem; }
+        .game-card {
+            grid-template-columns: auto 1fr;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        .game-link { grid-column: 1 / -1; text-align: center; }
+    }
 """
 
 GAME_CSS = """
@@ -281,6 +294,13 @@ GAME_CSS = """
         border: none;
         border-top: 1px solid var(--border);
         margin: 1.5rem 0;
+    }
+    @media (max-width: 768px) {
+        body { padding: 1rem; }
+        .container { padding: 0; }
+        .content { padding: 1.5rem; }
+        h1 { font-size: 1.25rem; }
+        .content h2 { font-size: 1rem; }
     }
 """
 
