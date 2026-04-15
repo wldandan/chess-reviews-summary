@@ -27,107 +27,59 @@ def get_game_list():
     import re
     games = []
     for f in get_md_files():
-        # Parse filename formats:
-        # Format 1: {date}_{timestamp}_{player}_{result}_{opponent}_{moves}
-        #           2026-04-13_167293652644_aaronwang2026_执白胜_Clement924810_19步
-        #           parts: ['2026-04-13', '167293652644', 'aaronwang2026', '执白胜', 'Clement924810', '19步']
-        # Format 2: {date}_{result}_{player}_vs_{opponent}_{moves}
-        #           2026-04-08_执白胜_aaronwang2026_vs_Coach-Levy_149步
-        #           parts: ['2026', '04', '08', '执白胜', 'aaronwang2026', 'vs', 'Coach-Levy', '149步']
+        # New filename format: {date}_{timestamp}_{player}_{result}_{opponent}_{moves}_{time}.md
+        # Example: 2026-04-13_167245372486_aaronwang2026_执黑和_kote-karter_59步_30+0.md
+        # Parts: ['2026-04-13', '167245372486', 'aaronwang2026', '执黑和', 'kote-karter', '59步', '30+0']
         basename = f.replace('.md', '')
         parts = basename.split('_')
 
         if len(parts) < 6:
             continue
 
-        color_text = '执白' if '执白' in f else '执黑'
-        result = '胜' if '胜' in f else ('和' if '和' in f else '败')
+        # Date is always at parts[0]
+        date = parts[0]
 
-        # Find opponent - check if 'vs' exists in filename
-        opponent = None
-        vs_index = None
-        for i, p in enumerate(parts):
-            if p == 'vs':
-                vs_index = i
-                break
+        # Color and result from parts[3]
+        color_result = parts[3]
+        color_text = '执白' if '执白' in color_result else '执黑'
+        result = '胜' if '胜' in color_result else ('和' if '和' in color_result else '败')
 
-        if vs_index is not None and vs_index + 1 < len(parts):
-            # Format 2: opponent is right after 'vs'
-            opponent = parts[vs_index + 1]
-        else:
-            # Format 1: opponent is at index 4 (parts[3] is result, parts[4] is opponent, parts[5] is moves)
-            opponent = parts[4]
+        # Opponent is at parts[4]
+        opponent = parts[4]
 
-        # Extract date
-        if re.match(r'\d{4}-\d{2}-\d{2}', parts[0]):
-            # Format 1: date is already combined in parts[0]
-            date = parts[0]
-        else:
-            # Format 2: date is split across parts 0,1,2
-            date = f"{parts[0]}-{parts[1]}-{parts[2]}"
+        # Steps from parts[5] (e.g., "59步" -> "59")
+        steps = parts[5].replace('步', '') if '步' in parts[5] else parts[5]
 
-        if opponent is None:
-            continue
+        # Time control from parts[6] if exists
+        time_control = parts[6] if len(parts) > 6 else '-'
 
         content = read_file(os.path.join(SRC_DIR, f))
 
-        # Extract steps
-        steps = '-'
-        match = re.search(r'总回合数[：:]\s*(\d+)\s*步', content)
-        if not match:
-            match = re.search(r'回合数[：:]\s*(\d+)\s*步', content)
-        if not match:
-            match = re.search(r'回合数[：:]\s*\d+回合\s*\((\d+)步\)', content)
-        if not match:
-            match = re.search(r'\|\s*回合\s*\|\s*(\d+)\s*步', content)
-        if not match:
-            match = re.search(r'步后.*?(\d+)\s*步', content)
-        if not match:
-            match = re.search(r'(\d+)\s*步后', content)
+        # Count highlights (lines starting with "- **" after 🎯)
+        highlights = 0
+        match = re.search(r'🎯\s*\*\*.+?\*\*.*?\n((?:.+\n)*)', content)
         if match:
-            steps = match.group(1)
+            highlight_lines = match.group(1)
+            highlights = len(re.findall(r'^-\s+\*\*', highlight_lines, re.MULTILINE))
 
-            # Extract time control
-            time_control = '-'
-            match = re.search(r'时间控制[：:]\s*(\d+)', content)
-            if match:
-                tc = match.group(1)
-                if tc == '1800':
-                    time_control = '30+0'
-                elif tc == '900':
-                    time_control = '15+10'
-                elif tc == '600':
-                    time_control = '10+0'
-                elif tc == '300':
-                    time_control = '5+0'
-                else:
-                    time_control = tc
+        # Count mistakes (numbered items after ⚠️)
+        mistakes = 0
+        match = re.search(r'⚠️\s*\*\*.+?\*\*.*?\n((?:.+\n)*)', content)
+        if match:
+            mistake_section = match.group(1)
+            mistakes = len(re.findall(r'^\d+\.', mistake_section, re.MULTILINE))
 
-            # Count highlights (lines starting with "- **" after 🎯)
-            highlights = 0
-            match = re.search(r'🎯\s*\*\*.+?\*\*.*?\n((?:.+\n)*)', content)
-            if match:
-                highlight_lines = match.group(1)
-                highlights = len(re.findall(r'^-\s+\*\*', highlight_lines, re.MULTILINE))
-
-            # Count mistakes (numbered items after ⚠️)
-            mistakes = 0
-            match = re.search(r'⚠️\s*\*\*.+?\*\*.*?\n((?:.+\n)*)', content)
-            if match:
-                mistake_section = match.group(1)
-                mistakes = len(re.findall(r'^\d+\.', mistake_section, re.MULTILINE))
-
-            games.append({
-                'date': date,
-                'color': color_text,
-                'result': result,
-                'opponent': opponent,
-                'steps': steps,
-                'time_control': time_control,
-                'highlights': highlights,
-                'mistakes': mistakes,
-                'filename': f
-            })
+        games.append({
+            'date': date,
+            'color': color_text,
+            'result': result,
+            'opponent': opponent,
+            'steps': steps,
+            'time_control': time_control,
+            'highlights': highlights,
+            'mistakes': mistakes,
+            'filename': f
+        })
     return sorted(games, key=lambda x: x['date'], reverse=True)
 
 INDEX_CSS = """
