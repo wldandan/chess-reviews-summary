@@ -27,9 +27,9 @@ def get_game_list():
     import re
     games = []
     for f in get_md_files():
-        # New filename format: {date}_{timestamp}_{player}_{result}_{opponent}_{moves}_{time}.md
-        # Example: 2026-04-13_167245372486_aaronwang2026_执黑和_kote-karter_59步_30+0.md
-        # Parts: ['2026-04-13', '167245372486', 'aaronwang2026', '执黑和', 'kote-karter', '59步', '30+0']
+        # Filename format: {日期}_{game_id}_{白方}_{胜负}_{黑方}_{回合数}步}_{time_control}.md
+        # Example: 2026-04-14_167293652644_aaronwang2026_执白胜_Clement924810_19步_10+0.md
+        # Parts: ['2026-04-14', '167293652644', 'aaronwang2026', '执白胜', 'Clement924810', '19步', '10+0']
         basename = f.replace('.md', '')
         parts = basename.split('_')
 
@@ -39,15 +39,15 @@ def get_game_list():
         # Date is always at parts[0]
         date = parts[0]
 
-        # Color and result from parts[3]
+        # Color and result from parts[3] (e.g., '执白胜', '执黑和')
         color_result = parts[3]
         color_text = '执白' if '执白' in color_result else '执黑'
         result = '胜' if '胜' in color_result else ('和' if '和' in color_result else '败')
 
-        # Opponent is at parts[4]
+        # Opponent (黑方) is at parts[4]
         opponent = parts[4]
 
-        # Steps from parts[5] (e.g., "59步" -> "59")
+        # Steps from parts[5] (e.g., "19步" -> "19")
         steps = parts[5].replace('步', '') if '步' in parts[5] else parts[5]
 
         # Time control from parts[6] if exists
