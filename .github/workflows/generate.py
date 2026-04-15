@@ -57,17 +57,29 @@ def get_game_list():
 
         # Count highlights (lines starting with "- **" after 🎯)
         highlights = 0
-        match = re.search(r'🎯\s*\*\*.+?\*\*.*?\n((?:.+\n)*)', content)
-        if match:
-            highlight_lines = match.group(1)
-            highlights = len(re.findall(r'^-\s+\*\*', highlight_lines, re.MULTILINE))
+        in_highlight = False
+        for line in content.split('\n'):
+            stripped = line.strip()
+            if '🎯' in line and '**' in line:
+                in_highlight = True
+                continue
+            if in_highlight and stripped.startswith('- **'):
+                highlights += 1
+            if in_highlight and (stripped.startswith('---') or stripped.startswith('⚠️')):
+                in_highlight = False
 
-        # Count mistakes (numbered items after ⚠️)
+        # Count mistakes (numbered items like "1. **" after ⚠️)
         mistakes = 0
-        match = re.search(r'⚠️\s*\*\*.+?\*\*.*?\n((?:.+\n)*)', content)
-        if match:
-            mistake_section = match.group(1)
-            mistakes = len(re.findall(r'^\d+\.', mistake_section, re.MULTILINE))
+        in_mistake = False
+        for line in content.split('\n'):
+            stripped = line.strip()
+            if '⚠️' in line and '**' in line:
+                in_mistake = True
+                continue
+            if in_mistake and stripped and stripped[0].isdigit() and '. **' in stripped:
+                mistakes += 1
+            if in_mistake and (stripped.startswith('---') or stripped.startswith('💡') or stripped.startswith('🌟')):
+                in_mistake = False
 
         games.append({
             'date': date,
