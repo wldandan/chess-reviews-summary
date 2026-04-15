@@ -137,6 +137,7 @@ INDEX_CSS = """
         --bg-card: #16213e;
         --accent-gold: #e6b800;
         --accent-green: #4ade80;
+        --accent-red: #f87171;
         --text-light: #f1f5f9;
         --text-muted: #94a3b8;
         --border: #334155;
@@ -233,69 +234,126 @@ INDEX_CSS = """
         display: inline-block;
     }
     .game-list { display: flex; flex-direction: column; gap: 1rem; }
+
+    /* 卡片 */
     .game-card {
         background: var(--bg-card);
-        border-radius: 12px;
-        padding: 1.5rem;
+        border-radius: 10px;
+        padding: 1rem 1.25rem;
         border: 1px solid var(--border);
         display: grid;
         grid-template-columns: auto 1fr auto;
         align-items: center;
-        gap: 1.5rem;
+        gap: 1.25rem;
         transition: all 0.3s ease;
-        cursor: pointer;
     }
     .game-card:hover {
         border-color: var(--accent-gold);
         transform: translateX(8px);
         box-shadow: 0 0 20px rgba(230, 184, 0, 0.2);
     }
+
+    /* 结果圆圈 */
     .game-result {
-        width: 60px;
-        height: 60px;
+        width: 48px;
+        height: 48px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.25rem;
+        font-size: 1rem;
         font-weight: 700;
+        flex-shrink: 0;
     }
     .result-win { background: linear-gradient(135deg, #22c55e, #16a34a); color: white; }
     .result-draw { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
     .result-loss { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
-    .game-info h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
-    .game-meta { display: flex; gap: 1rem; color: var(--text-muted); font-size: 0.875rem; }
-    .game-color {
-        padding: 0.25rem 0.75rem;
-        border-radius: 4px;
+
+    /* 信息区域 */
+    .game-info h3 {
+        font-size: 1rem;
+        margin-bottom: 0.35rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    .game-date {
         font-size: 0.75rem;
+        color: var(--text-muted);
+        font-weight: 400;
+    }
+    .game-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        flex-wrap: wrap;
+    }
+    .game-color {
+        padding: 0.15rem 0.4rem;
+        border-radius: 4px;
+        font-size: 0.65rem;
         font-weight: 500;
     }
     .color-white { background: #f8fafc; color: #1e293b; }
     .color-black { background: #334155; color: #f1f5f9; }
-    .game-stats {
-        display: flex;
-        gap: 1rem;
-        margin-top: 0.5rem;
-        font-size: 0.8rem;
+    .meta-dot { color: var(--border); }
+
+    /* 指标标签 */
+    .metric-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.2rem 0.5rem;
+        border-radius: 5px;
+        font-size: 0.72rem;
+        font-weight: 500;
     }
-    .stat-highlight { color: #4ade80; }
-    .stat-mistake { color: #f87171; }
-    .time-badge {
-        background: var(--bg-dark);
-        padding: 0.15rem 0.5rem;
-        border-radius: 4px;
-        font-size: 0.75rem;
+    .metric-tag.green {
+        background: rgba(74, 222, 128, 0.15);
+        border: 1px solid rgba(74, 222, 128, 0.4);
+        color: var(--accent-green);
     }
+    .metric-tag.green .value { font-weight: 700; }
+    .metric-tag.red {
+        background: rgba(248, 113, 113, 0.15);
+        border: 1px solid rgba(248, 113, 113, 0.4);
+        color: var(--accent-red);
+    }
+    .metric-tag.red .value { font-weight: 700; }
+
+    /* 步数和分钟标签 */
+    .metric-basic {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.15rem 0.4rem;
+        border-radius: 5px;
+        font-size: 0.72rem;
+        background: rgba(230, 184, 0, 0.1);
+        border: 1px solid rgba(230, 184, 0, 0.3);
+        color: var(--accent-gold);
+    }
+    .metric-basic .value { font-weight: 600; }
+
+    /* 链接 */
     .game-link {
         color: var(--accent-gold);
         text-decoration: none;
-        padding: 0.5rem 1rem;
+        padding: 0.4rem 0.85rem;
         border: 1px solid var(--accent-gold);
         border-radius: 6px;
         transition: all 0.3s ease;
+        font-size: 0.8rem;
+        font-weight: 500;
+        flex-shrink: 0;
     }
-    .game-link:hover { background: var(--accent-gold); color: var(--bg-dark); }
+    .game-link:hover {
+        background: var(--accent-gold);
+        color: var(--bg-dark);
+    }
     footer {
         text-align: center;
         margin-top: 4rem;
@@ -316,7 +374,7 @@ INDEX_CSS = """
             padding: 1rem;
         }
         .game-link { grid-column: 1 / -1; text-align: center; }
-        .game-stats { flex-wrap: wrap; }
+        .game-meta { flex-wrap: wrap; }
     }
 """
 
@@ -423,16 +481,16 @@ def generate_index_html():
         <div class="game-card">
             <div class="game-result {result_class}">{g['result']}</div>
             <div class="game-info">
-                <h3>vs {g['opponent']}</h3>
+                <h3>vs {g['opponent']} <span class="game-date">· {g['date']}</span></h3>
                 <div class="game-meta">
                     <span class="game-color {color_class}">{g['color']}</span>
-                    <span>{g['date']}</span>
-                    <span>{g['steps']}步</span>
-                    <span class="time-badge">⏱{g['time_control']}</span>
-                </div>
-                <div class="game-stats">
-                    <span class="stat-highlight">✨ {g['highlights']} 亮点</span>
-                    <span class="stat-mistake">⚠️ {g['mistakes']} 失误</span>
+                    <span class="meta-dot">·</span>
+                    <span class="metric-basic">♟ <span class="value">{g['steps']}</span> 步</span>
+                    <span class="meta-dot">·</span>
+                    <span class="metric-basic">⏱ <span class="value">{g['time_control']}</span> 分钟</span>
+                    <span class="meta-dot">·</span>
+                    <span class="metric-tag green">✨ <span class="value">{g['highlights']}</span> 亮点</span>
+                    <span class="metric-tag red">⚠️ <span class="value">{g['mistakes']}</span> 失误</span>
                 </div>
             </div>
             <a href="{link}" class="game-link">查看 →</a>
