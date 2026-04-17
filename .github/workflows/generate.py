@@ -66,7 +66,7 @@ def get_game_list():
             seconds = int(time_control_raw)
             if seconds >= 60:
                 minutes = seconds // 60
-                time_control = f"{minutes}+0"
+                time_control = f"{minutes}分钟+0秒"
             else:
                 time_control = time_control_raw
         else:
