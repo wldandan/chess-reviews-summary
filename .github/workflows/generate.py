@@ -59,14 +59,17 @@ def get_game_list():
             if base.isdigit():
                 seconds = int(base)
                 minutes = seconds // 60 if seconds >= 60 else seconds
-                time_control = f"{minutes}分钟+{inc}秒"
+                if inc == '0':
+                    time_control = f"{minutes}分钟"
+                else:
+                    time_control = f"{minutes}分钟+{inc}秒"
             else:
                 time_control = time_control_raw
         elif time_control_raw.isdigit():
             seconds = int(time_control_raw)
             if seconds >= 60:
                 minutes = seconds // 60
-                time_control = f"{minutes}分钟+0秒"
+                time_control = f"{minutes}分钟"
             else:
                 time_control = time_control_raw
         else:
