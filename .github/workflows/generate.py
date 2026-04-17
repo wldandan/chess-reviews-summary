@@ -51,7 +51,17 @@ def get_game_list():
         steps = parts[5].replace('步', '') if '步' in parts[5] else parts[5]
 
         # Time control from parts[6] if exists
-        time_control = parts[6] if len(parts) > 6 else '-'
+        time_control_raw = parts[6] if len(parts) > 6 else '-'
+        # Convert Lichess seconds format to human readable (e.g., "1800" -> "30+0")
+        if time_control_raw.isdigit():
+            seconds = int(time_control_raw)
+            if seconds >= 60:
+                minutes = seconds // 60
+                time_control = f"{minutes}+0"
+            else:
+                time_control = time_control_raw
+        else:
+            time_control = time_control_raw
 
         content = read_file(os.path.join(SRC_DIR, f))
 
