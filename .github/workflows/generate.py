@@ -472,7 +472,7 @@ def generate_index_html():
                     <span class="meta-dot">·</span>
                     <span class="metric-basic">♟ <span class="value">{g['steps']}</span> 步</span>
                     <span class="meta-dot">·</span>
-                    <span class="metric-basic">⏱ <span class="value">{g['time_control']}</span> 分钟</span>
+                    <span class="metric-basic">⏱ <span class="value">{g['time_control']}</span></span>
                     <span class="meta-dot">·</span>
                     <span class="metric-tag green">✨ <span class="value">{g['highlights']}</span> 亮点</span>
                     <span class="metric-tag red">⚠️ <span class="value">{g['mistakes']}</span> 失误</span>
