@@ -52,8 +52,17 @@ def get_game_list():
 
         # Time control from parts[6] if exists
         time_control_raw = parts[6] if len(parts) > 6 else '-'
-        # Convert Lichess seconds format to human readable (e.g., "1800" -> "30+0")
-        if time_control_raw.isdigit():
+        # Convert Lichess seconds format to human readable (e.g., "1800" -> "30+0", "900+10" -> "15+10")
+        if '+' in time_control_raw:
+            # Handle "900+10" format
+            base, inc = time_control_raw.split('+')
+            if base.isdigit():
+                seconds = int(base)
+                minutes = seconds // 60 if seconds >= 60 else seconds
+                time_control = f"{minutes}+{inc}"
+            else:
+                time_control = time_control_raw
+        elif time_control_raw.isdigit():
             seconds = int(time_control_raw)
             if seconds >= 60:
                 minutes = seconds // 60
