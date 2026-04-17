@@ -294,6 +294,7 @@ INDEX_CSS = """
         padding: 0.2rem 0.5rem;
         border-radius: 5px;
         font-size: 0.72rem;
+        line-height: 1.4;
         font-weight: 500;
     }
     .metric-tag.green {
