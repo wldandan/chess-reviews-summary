@@ -463,10 +463,11 @@ def generate_index_html():
     losses = sum(1 for g in games if g['result'] == '败')
 
     games_html = ''
+    result_class_map = {'胜': 'win', '和': 'draw', '败': 'loss'}
     for g in games:
         link = f"./{g['filename'].replace('.md', '.html')}"
         color_class = 'color-white' if g['color'] == '执白' else 'color-black'
-        result_class = f'result-{g["result"]}'
+        result_class = f'result-{result_class_map.get(g["result"], g["result"])}'
         games_html += f"""
         <div class="game-card">
             <div class="game-result {result_class}">{g['result']}</div>
