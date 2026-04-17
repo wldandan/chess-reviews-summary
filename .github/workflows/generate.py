@@ -314,7 +314,7 @@ INDEX_CSS = """
         display: inline-flex;
         align-items: center;
         gap: 0.25rem;
-        padding: 0.15rem 0.4rem;
+        padding: 0.2rem 0.5rem;
         border-radius: 5px;
         font-size: 0.72rem;
         background: rgba(230, 184, 0, 0.1);
