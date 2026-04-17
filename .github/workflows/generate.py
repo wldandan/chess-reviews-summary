@@ -317,6 +317,7 @@ INDEX_CSS = """
         padding: 0.2rem 0.5rem;
         border-radius: 5px;
         font-size: 0.72rem;
+        line-height: 1.4;
         background: rgba(230, 184, 0, 0.1);
         border: 1px solid rgba(230, 184, 0, 0.3);
         color: var(--accent-gold);
