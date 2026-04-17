@@ -542,7 +542,27 @@ def generate_index_html():
 def generate_game_html(filename):
     """Generate HTML for a single game markdown file."""
     md_content = read_file(os.path.join(SRC_DIR, filename))
+
+    # Extract chess.com link if exists (line like 🔗 [Chess.com 对局链接](https://...))
+    import re
+    chess_com_link = ''
+    link_pattern = r'🔗 \[Chess\.com[^\]]*\]\((https?://[^\)]+)\)'
+    match = re.search(link_pattern, md_content)
+    if match:
+        url = match.group(1)
+        chess_com_link = f'<p>🔗 <a href="{url}" target="_blank" rel="noopener">查看 Chess.com 详情</a></p>'
+        # Remove the link line from content
+        md_content = re.sub(link_pattern, '', md_content, count=1)
+
+    # Find 总体评价 and insert link after it
     body_html = mistune.html(md_content)
+    if chess_com_link:
+        body_html = re.sub(
+            r'(<p><strong>总体评价：</strong>.*?</p>)',
+            r'\1\n            ' + chess_com_link,
+            body_html,
+            flags=re.DOTALL
+        )
 
     title = filename.replace('.md', '').replace('_', ' ')
 
