@@ -91,18 +91,45 @@ def get_game_list():
             if in_highlight and (stripped.startswith('---') or stripped.startswith('### ⚠️') or stripped.startswith('### 💡') or stripped.startswith('### 🌟')):
                 in_highlight = False
 
-        # Count mistakes (numbered items like "1. **" after ⚠️ section)
+        # Count mistakes after ⚠️ section
+        # Format 1: numbered items like "**1. 第 X 步**" or "1. **..."
+        # Format 2: table rows with 💥 or 💀 (blunder markers)
         mistakes = 0
         in_mistake = False
-        for line in content.split('\n'):
+        lines = content.split('\n')
+        for i, line in enumerate(lines):
             stripped = line.strip()
+            if not stripped:
+                continue
             # Section header: has ⚠️ and is a heading
             if '⚠️' in stripped and stripped.startswith('###'):
                 in_mistake = True
                 continue
-            if in_mistake and stripped and stripped[0].isdigit() and '. **' in stripped:
-                mistakes += 1
+            if in_mistake:
+                # Format 1: numbered item
+                # - "**1. ..." (starts with **, then digit, then .) - template format
+                # - "1. **..." (starts with digit, then ". **")
+                is_numbered = False
+                if stripped.startswith('**') and len(stripped) > 3 and stripped[2].isdigit() and stripped[3] == '.':
+                    is_numbered = True
+                elif stripped[0].isdigit() and '. **' in stripped:
+                    is_numbered = True
+                # Format 2: table row with 💥 or 💀 (blunder markers)
+                is_table_blunder = stripped.startswith('|') and ('💥' in stripped or '💀' in stripped or '⚠️' in stripped)
+                if is_numbered or is_table_blunder:
+                    mistakes += 1
             if in_mistake and (stripped.startswith('---') or stripped.startswith('### 💡') or stripped.startswith('### 🌟') or stripped.startswith('### 📚')):
+                # Don't end on --- if numbered items follow in this section
+                if stripped.startswith('---'):
+                    next_idx = i + 1
+                    while next_idx < len(lines) and not lines[next_idx].strip():
+                        next_idx += 1
+                    if next_idx < len(lines):
+                        next_line = lines[next_idx].strip()
+                        next_is_numbered = (next_line.startswith('**') and len(next_line) > 3 and next_line[2].isdigit() and next_line[3] == '.') or \
+                                          (next_line and next_line[0].isdigit() and '. **' in next_line)
+                        if next_is_numbered:
+                            continue
                 in_mistake = False
 
         games.append({
