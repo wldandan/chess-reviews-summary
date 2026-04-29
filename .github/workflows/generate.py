@@ -365,6 +365,21 @@ INDEX_CSS = """
     }
     .metric-basic .value { font-weight: 600; }
 
+    /* 分析时间标签 */
+    .metric-time {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.2rem 0.5rem;
+        border-radius: 5px;
+        font-size: 0.72rem;
+        line-height: 1.4;
+        background: rgba(139, 92, 246, 0.15);
+        border: 1px solid rgba(139, 92, 246, 0.4);
+        color: #a78bfa;
+    }
+    .metric-time .value { font-weight: 600; }
+
     /* 链接 */
     .game-link {
         color: var(--accent-gold);
@@ -519,6 +534,8 @@ def generate_index_html():
                     <span class="meta-dot">·</span>
                     <span class="metric-tag green">✨ <span class="value">{g['highlights']}</span> 亮点</span>
                     <span class="metric-tag red">⚠️ <span class="value">{g['mistakes']}</span> 失误</span>
+                    <span class="meta-dot">·</span>
+                    <span class="metric-time">📝 <span class="value">{g['analyze_time']}</span></span>
                 </div>
             </div>
             <a href="{link}" class="game-link">查看 →</a>
@@ -603,6 +620,10 @@ def generate_game_html(filename):
 
     title = filename.replace('.md', '').replace('_', ' ')
 
+    # Get analyze time from file modification time
+    file_path = os.path.join(SRC_DIR, filename)
+    analyze_time = get_file_mtime(file_path)
+
     template = f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -615,6 +636,7 @@ def generate_game_html(filename):
 <body>
     <div class="container">
         <a href="./index.html" class="back-link">← 返回列表</a>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1rem;">📝 分析时间：{analyze_time}</p>
         <div class="content">
             {body_html}
         </div>
