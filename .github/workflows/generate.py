@@ -4,6 +4,7 @@
 import os
 import mistune
 from datetime import datetime
+import time
 
 SRC_DIR = 'docs'
 OUTPUT_DIR = '_site'
@@ -21,6 +22,11 @@ def read_file(path):
     """Read file content."""
     with open(path, 'r', encoding='utf-8') as f:
         return f.read()
+
+def get_file_mtime(path):
+    """Get file modification time formatted as YYYY-MM-DD HH:MM."""
+    mtime = os.path.getmtime(path)
+    return datetime.fromtimestamp(mtime).strftime('%Y-%m-%d %H:%M')
 
 def get_game_list():
     """Generate game list from markdown files."""
@@ -132,6 +138,9 @@ def get_game_list():
                             continue
                 in_mistake = False
 
+        file_path = os.path.join(SRC_DIR, f)
+        analyze_time = get_file_mtime(file_path)
+
         games.append({
             'date': date,
             'color': color_text,
@@ -141,7 +150,8 @@ def get_game_list():
             'time_control': time_control,
             'highlights': highlights,
             'mistakes': mistakes,
-            'filename': f
+            'filename': f,
+            'analyze_time': analyze_time
         })
     return sorted(games, key=lambda x: x['date'], reverse=True)
 
