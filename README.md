@@ -71,3 +71,4 @@ open _site/index.html
 2. 部署到 GitHub Pages
 
 网站地址：`https://wldandan.github.io/chess-reviews-summary/`
+# trigger build Tue May 12 18:45:56 CST 2026
