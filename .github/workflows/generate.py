@@ -91,7 +91,7 @@ def get_game_list():
         in_highlight = False
         for line in content.split('\n'):
             stripped = line.strip()
-            if '🎯' in stripped and stripped.startswith('###'):
+            if (stripped.startswith('##') or stripped.startswith('###')) and '🎯' in stripped:
                 in_highlight = True
                 continue
             if in_highlight and (
@@ -99,7 +99,10 @@ def get_game_list():
                 (stripped and stripped[0].isdigit() and '. **' in stripped)
             ):
                 highlights += 1
-            if in_highlight and (stripped.startswith('---') or stripped.startswith('### ⚠️') or stripped.startswith('### 💡') or stripped.startswith('### 🌟')):
+            if in_highlight and (
+                stripped.startswith('---') or
+                (('⚠️' in stripped or '💡' in stripped or '🌟' in stripped) and ('##' in stripped or '###' in stripped))
+            ):
                 in_highlight = False
 
         # Count mistakes: numbered items "1. **..." or table rows with 💥/💀/⚠️
@@ -110,7 +113,7 @@ def get_game_list():
             stripped = line.strip()
             if not stripped:
                 continue
-            if '⚠️' in stripped and stripped.startswith('###'):
+            if (stripped.startswith('##') or stripped.startswith('###')) and '⚠️' in stripped:
                 in_mistake = True
                 continue
             if in_mistake:
@@ -121,7 +124,10 @@ def get_game_list():
                 is_table_blunder = stripped.startswith('|') and ('💥' in stripped or '💀' in stripped or '⚠️' in stripped)
                 if is_numbered or is_table_blunder:
                     mistakes += 1
-            if in_mistake and (stripped.startswith('---') or stripped.startswith('### 💡') or stripped.startswith('### 🌟') or stripped.startswith('### 📚')):
+            if in_mistake and (
+                stripped.startswith('---') or
+                (('💡' in stripped or '🌟' in stripped or '📚' in stripped) and ('##' in stripped or '###' in stripped))
+            ):
                 if stripped.startswith('---'):
                     next_idx = i + 1
                     while next_idx < len(lines) and not lines[next_idx].strip():
