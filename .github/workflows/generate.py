@@ -50,8 +50,11 @@ def get_game_list():
         color_text = '执白' if '执白' in color_result else '执黑'
         result = '胜' if '胜' in color_result else ('和' if '和' in color_result else '败')
 
-        # Opponent (黑方) is at parts[4]
-        opponent = parts[4]
+        # Opponent: parts[4] 固定是对局中不在 parts[2] 的那方（可能是 aaron 或对手）
+        # 文件格式: {date}_{game_id}_{白方}_{color_result}_{黑方}_{steps}_{time}.md
+        # 当 aaron 执黑时 parts[2]=对手, parts[4]=aaron; aaron 执白时 parts[2]=aaron, parts[4]=对手
+        # 用 parts[2] 是否等于 'aaronwang2026' 来判断
+        opponent = 'aaronwang2026' if parts[2] != 'aaronwang2026' else parts[4]
 
         # Steps from parts[5] (e.g., "19步" -> "19")
         steps = parts[5].replace('步', '') if '步' in parts[5] else parts[5]
@@ -83,23 +86,23 @@ def get_game_list():
 
         content = read_file(os.path.join(SRC_DIR, f))
 
-        # Count highlights (lines starting with "- **" after 🎯 section)
+        # Count highlights: lines starting with "- **" OR numbered items "1. **..."
         highlights = 0
         in_highlight = False
         for line in content.split('\n'):
             stripped = line.strip()
-            # Section header: has 🎯 and is a heading (###)
             if '🎯' in stripped and stripped.startswith('###'):
                 in_highlight = True
                 continue
-            if in_highlight and stripped.startswith('- **'):
+            if in_highlight and (
+                stripped.startswith('- **') or
+                (stripped and stripped[0].isdigit() and '. **' in stripped)
+            ):
                 highlights += 1
             if in_highlight and (stripped.startswith('---') or stripped.startswith('### ⚠️') or stripped.startswith('### 💡') or stripped.startswith('### 🌟')):
                 in_highlight = False
 
-        # Count mistakes after ⚠️ section
-        # Format 1: numbered items like "**1. 第 X 步**" or "1. **..."
-        # Format 2: table rows with 💥 or 💀 (blunder markers)
+        # Count mistakes: numbered items "1. **..." or table rows with 💥/💀/⚠️
         mistakes = 0
         in_mistake = False
         lines = content.split('\n')
@@ -107,33 +110,28 @@ def get_game_list():
             stripped = line.strip()
             if not stripped:
                 continue
-            # Section header: has ⚠️ and is a heading
             if '⚠️' in stripped and stripped.startswith('###'):
                 in_mistake = True
                 continue
             if in_mistake:
-                # Format 1: numbered item
-                # - "**1. ..." (starts with **, then digit, then .) - template format
-                # - "1. **..." (starts with digit, then ". **")
-                is_numbered = False
-                if stripped.startswith('**') and len(stripped) > 3 and stripped[2].isdigit() and stripped[3] == '.':
-                    is_numbered = True
-                elif stripped[0].isdigit() and '. **' in stripped:
-                    is_numbered = True
-                # Format 2: table row with 💥 or 💀 (blunder markers)
+                is_numbered = (
+                    (stripped.startswith('**') and len(stripped) > 3 and stripped[2].isdigit() and stripped[3] == '.') or
+                    (stripped and stripped[0].isdigit() and '. **' in stripped)
+                )
                 is_table_blunder = stripped.startswith('|') and ('💥' in stripped or '💀' in stripped or '⚠️' in stripped)
                 if is_numbered or is_table_blunder:
                     mistakes += 1
             if in_mistake and (stripped.startswith('---') or stripped.startswith('### 💡') or stripped.startswith('### 🌟') or stripped.startswith('### 📚')):
-                # Don't end on --- if numbered items follow in this section
                 if stripped.startswith('---'):
                     next_idx = i + 1
                     while next_idx < len(lines) and not lines[next_idx].strip():
                         next_idx += 1
                     if next_idx < len(lines):
                         next_line = lines[next_idx].strip()
-                        next_is_numbered = (next_line.startswith('**') and len(next_line) > 3 and next_line[2].isdigit() and next_line[3] == '.') or \
-                                          (next_line and next_line[0].isdigit() and '. **' in next_line)
+                        next_is_numbered = (
+                            (next_line.startswith('**') and len(next_line) > 3 and next_line[2].isdigit() and next_line[3] == '.') or
+                            (next_line and next_line[0].isdigit() and '. **' in next_line)
+                        )
                         if next_is_numbered:
                             continue
                 in_mistake = False
