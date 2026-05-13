@@ -86,24 +86,38 @@ def get_game_list():
 
         content = read_file(os.path.join(SRC_DIR, f))
 
-        # Count highlights: lines starting with "- **" OR numbered items "1. **..."
+        # Count highlights: "- **" OR numbered items OR "### 🚨" (sub-headers in blunder sections)
+        # Start on ## 🎯 (template) OR ## 💥 (alternative format for opponent analysis)
+        # End when hitting ## ⚠️ (mistake section starts) OR --- OR ## 💡/🌟
         highlights = 0
         in_highlight = False
+        in_blunder_section = False  # True when we're in ## 💥 section
         for line in content.split('\n'):
             stripped = line.strip()
             if (stripped.startswith('##') or stripped.startswith('###')) and '🎯' in stripped:
                 in_highlight = True
+                in_blunder_section = False
                 continue
-            if in_highlight and (
-                stripped.startswith('- **') or
-                (stripped and stripped[0].isdigit() and '. **' in stripped)
-            ):
-                highlights += 1
+            if (stripped.startswith('##') or stripped.startswith('###')) and '💥' in stripped:
+                in_highlight = True
+                in_blunder_section = True
+                continue
+            if in_highlight:
+                if in_blunder_section:
+                    # In ## 💥 section: count ### 🚨 sub-headers as highlights
+                    if stripped.startswith('### 🚨'):
+                        highlights += 1
+                else:
+                    # In ## 🎯 section: count numbered or "- **" items
+                    if stripped.startswith('- **') or (stripped and stripped[0].isdigit() and '. **' in stripped):
+                        highlights += 1
+            # End highlight section: --- OR ## 💡/🌟/📚 OR ## ⚠️ (mistakes section)
             if in_highlight and (
                 stripped.startswith('---') or
-                (('⚠️' in stripped or '💡' in stripped or '🌟' in stripped) and ('##' in stripped or '###' in stripped))
+                (('⚠️' in stripped or '💡' in stripped or '🌟' in stripped or '📚' in stripped) and ('##' in stripped or '###' in stripped))
             ):
                 in_highlight = False
+                in_blunder_section = False
 
         # Count mistakes: numbered items "1. **..." or table rows with 💥/💀/⚠️
         mistakes = 0
@@ -121,8 +135,9 @@ def get_game_list():
                     (stripped.startswith('**') and len(stripped) > 3 and stripped[2].isdigit() and stripped[3] == '.') or
                     (stripped and stripped[0].isdigit() and '. **' in stripped)
                 )
+                is_bullet = stripped.startswith('- ')  # new format: "- 第 X 步（白）：..."
                 is_table_blunder = stripped.startswith('|') and ('💥' in stripped or '💀' in stripped or '⚠️' in stripped)
-                if is_numbered or is_table_blunder:
+                if is_numbered or is_bullet or is_table_blunder:
                     mistakes += 1
             if in_mistake and (
                 stripped.startswith('---') or
