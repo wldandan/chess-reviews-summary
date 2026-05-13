@@ -50,11 +50,11 @@ def get_game_list():
         color_text = '执白' if '执白' in color_result else '执黑'
         result = '胜' if '胜' in color_result else ('和' if '和' in color_result else '败')
 
-        # Opponent: parts[4] 固定是对局中不在 parts[2] 的那方（可能是 aaron 或对手）
+        # Opponent: parts[4] 固定是对局中不在 parts[2] 的那方
         # 文件格式: {date}_{game_id}_{白方}_{color_result}_{黑方}_{steps}_{time}.md
-        # 当 aaron 执黑时 parts[2]=对手, parts[4]=aaron; aaron 执白时 parts[2]=aaron, parts[4]=对手
+        # 当 aaron 执黑时 parts[2]=对手(白), parts[4]=aaron; aaron 执白时 parts[2]=aaron, parts[4]=对手(黑)
         # 用 parts[2] 是否等于 'aaronwang2026' 来判断
-        opponent = 'aaronwang2026' if parts[2] != 'aaronwang2026' else parts[4]
+        opponent = parts[2] if parts[2] != 'aaronwang2026' else parts[4]
 
         # Steps from parts[5] (e.g., "19步" -> "19")
         steps = parts[5].replace('步', '') if '步' in parts[5] else parts[5]
